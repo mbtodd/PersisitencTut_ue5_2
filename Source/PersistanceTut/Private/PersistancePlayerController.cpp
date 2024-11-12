@@ -28,15 +28,17 @@ void APersistancePlayerController::HandleServerEntry()
 	{
 		return;
 	}
+
+	FString PID = "1234";
 	
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 
 	Request->OnProcessRequestComplete().BindUObject(this, &APersistancePlayerController::OnProcessRequestComplete);
-	Request->SetURL("http://localhost:8080/api/PlayerData");
-	Request->SetVerb("POST");
+	Request->SetURL("http://localhost:8080/api/PlayerData/" + PID);
+	Request->SetVerb("GET");
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 
-	FString JsonString;
+	/*FString JsonString;
 	FPlayerData PlayerData;
 	PlayerData.isvalid = true;
 	PlayerData.Xcoord = 10.0f;
@@ -44,7 +46,7 @@ void APersistancePlayerController::HandleServerEntry()
 	PlayerData.Zcoord = 30.0f;
 
 	FJsonObjectConverter::UStructToJsonObjectString(PlayerData, JsonString);
-	Request->SetContentAsString(JsonString);
+	Request->SetContentAsString(JsonString);*/
 	
 	
 	// Get Request through API passing in PID
@@ -57,10 +59,12 @@ void APersistancePlayerController::OnProcessRequestComplete(FHttpRequestPtr Requ
 {
 	if (Success)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *Response->GetContentAsString());
+		// setup pawn
+		UE_LOG(LogTemp, Warning, TEXT("SUCCESS %s"), *Response->GetContentAsString());
 	}
 	else
 	{
+		// spawn new pawn at default location and create entry in data table
 		UE_LOG(LogTemp, Warning, TEXT("FAILED"));
 	}
 }
