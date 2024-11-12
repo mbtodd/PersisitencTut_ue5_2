@@ -4,6 +4,7 @@
 #include "PersistancePlayerController.h"
 
 #include "JsonObjectConverter.h"
+#include "PersistanceTut/PersistanceTutGameMode.h"
 
 APersistancePlayerController::APersistancePlayerController()
 {
@@ -29,7 +30,7 @@ void APersistancePlayerController::HandleServerEntry()
 		return;
 	}
 
-	FString PID = "1234";
+	FString PID = "1235";
 	
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 
@@ -48,23 +49,67 @@ void APersistancePlayerController::HandleServerEntry()
 	FJsonObjectConverter::UStructToJsonObjectString(PlayerData, JsonString);
 	Request->SetContentAsString(JsonString);*/
 	
-	
 	// Get Request through API passing in PID
-	
 	Request->ProcessRequest();
 }
 
 void APersistancePlayerController::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response,
 	bool Success)
 {
+	FVector Location = FVector::ZeroVector;
+	Location.Z = 400.0f;
+	
 	if (Success)
 	{
 		// setup pawn
 		UE_LOG(LogTemp, Warning, TEXT("SUCCESS %s"), *Response->GetContentAsString());
+
+		FPlayerData PlayerData = ConvertToPlayerData(Response->GetContentAsString());
+		if (PlayerData.isvalid)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("SUCCESS %f"), PlayerData.Zcoord);
+			Location.X = PlayerData.Xcoord;
+			Location.Y = PlayerData.Ycoord;
+			Location.Z = PlayerData.Zcoord;
+		}
+		
+		if (APersistanceTutGameMode* GM = GetWorld()->GetAuthGameMode<APersistanceTutGameMode>())
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+			if (APawn* NewPawn = GetWorld()->SpawnActor<APawn>(GM->DefaultPawnClass, Location, FRotator::ZeroRotator, SpawnParams))
+			{
+				Possess(NewPawn);	
+			}
+		}
 	}
 	else
 	{
+		if (APersistanceTutGameMode* GM = GetWorld()->GetAuthGameMode<APersistanceTutGameMode>())
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			if (APawn* NewPawn = GetWorld()->SpawnActor<APawn>(GM->DefaultPawnClass, Location, FRotator::ZeroRotator, SpawnParams))
+			{
+				Possess(NewPawn);	
+			}
+		}
 		// spawn new pawn at default location and create entry in data table
 		UE_LOG(LogTemp, Warning, TEXT("FAILED"));
 	}
+}
+
+FPlayerData APersistancePlayerController::ConvertToPlayerData(const FString& ResponseString)
+{
+	FPlayerData PlayerData;
+	if (!ResponseString.Contains("timestamp"))
+	{
+		FJsonObjectConverter::JsonObjectStringToUStruct(*ResponseString, &PlayerData, 0, 0);
+		// FJsonObjectConverter::JsonObjectStringToUStruct(ResponseString, &PlayerData, 0, 0);
+	}
+	
+	return PlayerData;
 }

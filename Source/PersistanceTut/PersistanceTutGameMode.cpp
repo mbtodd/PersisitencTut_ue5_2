@@ -17,7 +17,7 @@ APersistanceTutGameMode::APersistanceTutGameMode()
 
 void APersistanceTutGameMode::PostLogin(APlayerController* NewPlayer)
 {
-	Super::PostLogin(NewPlayer);
+	// Super::PostLogin(NewPlayer);
 
 	if (APersistancePlayerController* PC = Cast<APersistancePlayerController>(NewPlayer))
 	{
