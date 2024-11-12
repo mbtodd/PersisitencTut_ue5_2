@@ -72,33 +72,22 @@ void APersistancePlayerController::OnProcessRequestComplete(FHttpRequestPtr Requ
 			Location.Y = PlayerData.Ycoord;
 			Location.Z = PlayerData.Zcoord;
 		}
-		
-		if (APersistanceTutGameMode* GM = GetWorld()->GetAuthGameMode<APersistanceTutGameMode>())
-		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-			if (APawn* NewPawn = GetWorld()->SpawnActor<APawn>(GM->DefaultPawnClass, Location, FRotator::ZeroRotator, SpawnParams))
-			{
-				Possess(NewPawn);	
-			}
-		}
 	}
 	else
 	{
-		if (APersistanceTutGameMode* GM = GetWorld()->GetAuthGameMode<APersistanceTutGameMode>())
-		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			if (APawn* NewPawn = GetWorld()->SpawnActor<APawn>(GM->DefaultPawnClass, Location, FRotator::ZeroRotator, SpawnParams))
-			{
-				Possess(NewPawn);	
-			}
-		}
-		// spawn new pawn at default location and create entry in data table
 		UE_LOG(LogTemp, Warning, TEXT("FAILED"));
+	}
+
+	if (APersistanceTutGameMode* GM = GetWorld()->GetAuthGameMode<APersistanceTutGameMode>())
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		if (APawn* NewPawn = GetWorld()->SpawnActor<APawn>(GM->DefaultPawnClass, Location, FRotator::ZeroRotator, SpawnParams))
+		{
+			Possess(NewPawn);	
+		}
 	}
 }
 
