@@ -11,9 +11,12 @@ USTRUCT(Blueprintable)
 struct FPlayerData
 {
 	GENERATED_BODY()
-	float XCoord = 0.0f;
-	float YCoord = 0.0f;
-	float ZCoord = 0.0f;
+	UPROPERTY()
+	float Xcoord = 0.0f;
+	UPROPERTY()
+	float Ycoord = 0.0f;
+	UPROPERTY()
+	float Zcoord = 0.0f;
 };
 
 UCLASS(minimalapi)
