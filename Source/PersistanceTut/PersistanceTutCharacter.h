@@ -50,6 +50,8 @@ public:
 
 protected:
 
+	float Health;
+
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
@@ -65,6 +67,9 @@ protected:
 	virtual void BeginPlay();
 
 public:
+	UFUNCTION(BlueprintCallable)
+	void SetHealth(float NewHealth);
+	
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/

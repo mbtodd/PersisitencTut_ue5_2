@@ -50,8 +50,8 @@ APersistanceTutCharacter::APersistanceTutCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	Health = 100.0f;
+
 }
 
 void APersistanceTutCharacter::BeginPlay()
@@ -67,6 +67,11 @@ void APersistanceTutCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+}
+
+void APersistanceTutCharacter::SetHealth(float NewHealth)
+{
+	Health = Health;
 }
 
 //////////////////////////////////////////////////////////////////////////
