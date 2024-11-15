@@ -2,6 +2,9 @@
 
 
 #include "CubeActor.h"
+#include "JsonObjectConverter.h"
+#include "UObject/ConstructorHelpers.h"
+
 
 // Sets default values for this component's properties
 UCubeActor::UCubeActor()
@@ -28,12 +31,19 @@ void UCubeActor::BeginPlay()
 
 	Request->OnProcessRequestComplete().BindUObject(this, &UCubeActor::OnProcessRequestComplete);
 	Request->SetURL("http://localhost:8080/api/CubeData");
-	Request->SetVerb("GET");
+	Request->SetVerb("POST");
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-
+	
+	FString JsonString;
+	FCubeData CubeData;
+	CubeData.Xcoord = 40.0f;
+	CubeData.Ycoord = 50.0f;
+	CubeData.Zcoord = 60.0f;
+	FJsonObjectConverter::UStructToJsonObjectString(CubeData, JsonString);
+	Request->SetContentAsString(JsonString);
+	UE_LOG(LogTemp, Warning, TEXT("Json string: %s"), *JsonString);
+	
 	Request->ProcessRequest();
-
-	// ...
 	
 }
 
