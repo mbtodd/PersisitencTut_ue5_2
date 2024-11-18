@@ -3,19 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
 #include "Components/ActorComponent.h"
 #include "Http.h"
-#include "CubeActor.generated.h"
-
+#include "MyActor.generated.h"
 
 USTRUCT(Blueprintable)
-struct FCubeData
+struct FMyActorData
 {
 	GENERATED_BODY()
 	UPROPERTY()
 	bool isvalid = false;
-	UPROPERTY()
-	int pid = -1;
 	float Xcoord = 0.0f;
 	UPROPERTY()
 	float Ycoord = 0.0f;
@@ -24,36 +22,38 @@ struct FCubeData
 	
 };
 
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PERSISTANCETUT_API UCubeActor : public UActorComponent
+UCLASS()
+class PERSISTANCETUT_API AMyActor : public AActor
 {
 	GENERATED_BODY()
+	
 public:	
-	// Sets default values for this component's properties
-	UCubeActor();
+	// Sets default values for this actor's properties
+	AMyActor();
 
-	// Called when the game starts
-	virtual void BeginPlay() override;
+	// Called every frame
+	// virtual void Tick(float DeltaTime) override;
 
-	void HandelServerEntry();
-
+	
 	UPROPERTY(EditAnywhere)
 	UShapeComponent* Root;
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* MyMesh;
 
-	
-	// Called every frame
-	// 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	void HandelServerEntry();
 
 protected:
-
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+	
 	FHttpModule* Http;
 	void OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool Success);
 
-	FCubeData ConvertToCubeData(const FString& ResponseString);
+	FMyActorData ConvertToNewCubeData(const FString& ResponseString);
+
+
+public:	
+
 
 };
-
