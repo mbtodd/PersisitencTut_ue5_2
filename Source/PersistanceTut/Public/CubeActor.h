@@ -8,11 +8,14 @@
 #include "CubeActor.generated.h"
 
 
-USTRUCT()
+USTRUCT(Blueprintable)
 struct FCubeData
 {
 	GENERATED_BODY()
 	UPROPERTY()
+	bool isvalid = false;
+	UPROPERTY()
+	int pid = -1;
 	float Xcoord = 0.0f;
 	UPROPERTY()
 	float Ycoord = 0.0f;
@@ -26,22 +29,25 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PERSISTANCETUT_API UCubeActor : public UActorComponent
 {
 	GENERATED_BODY()
-
 public:	
 	// Sets default values for this component's properties
 	UCubeActor();
 
-protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	void HandelServerEntry();
+
+	
+	// Called every frame
+	// 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 protected:
+
 	FHttpModule* Http;
 	void OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool Success);
 
-// public:	
-// 	// Called every frame
-// 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	FCubeData ConvertToCubeData(const FString& ResponseString);
 
-		
 };
+

@@ -31,27 +31,46 @@ void UCubeActor::BeginPlay()
 
 	Request->OnProcessRequestComplete().BindUObject(this, &UCubeActor::OnProcessRequestComplete);
 	Request->SetURL("http://localhost:8080/api/CubeData");
-	Request->SetVerb("POST");
+	Request->SetVerb("GET");
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	
 	FString JsonString;
-	FCubeData CubeData;
-	CubeData.Xcoord = 40.0f;
-	CubeData.Ycoord = 50.0f;
-	CubeData.Zcoord = 60.0f;
-	FJsonObjectConverter::UStructToJsonObjectString(CubeData, JsonString);
-	Request->SetContentAsString(JsonString);
+	// FCubeData CubeData;
+	// // CubeData.Xcoord = 40.0f;
+	// // CubeData.Ycoord = 50.0f;
+	// // CubeData.Zcoord = 60.0f;
+	// FJsonObjectConverter::UStructToJsonObjectString(CubeData, JsonString);
+	// Request->SetContentAsString(JsonString);
 	UE_LOG(LogTemp, Warning, TEXT("Json string: %s"), *JsonString);
 	
 	Request->ProcessRequest();
 	
 }
 
+void UCubeActor::HandelServerEntry()
+{
+UE_LOG(LogTemp, Warning, TEXT("Handle Server Entry Working %s"));
+}
+
+
 void UCubeActor::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool Success)
 {
+	FVector Location = FVector::ZeroVector;
+	Location.Z = 400;
+	
 	if (Success)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *Response->GetContentAsString());
+		// Setup Pawn
+		UE_LOG(LogTemp, Warning, TEXT("SUCCESS %s"), *Response->GetContentAsString());
+
+		FCubeData CubeData = ConvertToCubeData(Response->GetContentAsString());
+		if (CubeData.isvalid)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("CUBE DATA VALID"), CubeData.Zcoord);
+			Location.X = CubeData.Xcoord;
+			Location.Y = CubeData.Ycoord;
+			Location.Z = CubeData.Zcoord;
+		}
 	}
 	else
 	{
@@ -59,12 +78,14 @@ void UCubeActor::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponse
 	}
 }
 
+FCubeData UCubeActor::ConvertToCubeData(const FString& ResponseString)
+{
+	FCubeData CubeData;
+	if (ResponseString.Contains("timestamp"))
+	{
+		FJsonObjectConverter::JsonObjectStringToUStruct(*ResponseString, &CubeData, 0, NULL, 0);
+	}
+	return CubeData;
+}
 
-// // Called every frame
-// void UCubeActor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-// {
-// 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-//
-// 	// ...
-// }
 
