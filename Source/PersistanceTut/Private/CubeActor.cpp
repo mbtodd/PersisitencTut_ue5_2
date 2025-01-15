@@ -61,7 +61,7 @@ void UCubeActor::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponse
 	if (Success)
 	{
 		// Setup Pawn
-		UE_LOG(LogTemp, Warning, TEXT("SUCCESS %s"), *Response->GetContentAsString());
+		UE_LOG(LogTemp, Warning, TEXT("PAWN SUCCESS %s"), *Response->GetContentAsString());
 
 		FCubeData CubeData = ConvertToCubeData(Response->GetContentAsString());
 		if (CubeData.isvalid)
@@ -74,7 +74,7 @@ void UCubeActor::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponse
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("FAILED"));
+		UE_LOG(LogTemp, Warning, TEXT("CUBE DATA FAILED"));
 	}
 }
 
@@ -84,6 +84,7 @@ FCubeData UCubeActor::ConvertToCubeData(const FString& ResponseString)
 	if (ResponseString.Contains("timestamp"))
 	{
 		FJsonObjectConverter::JsonObjectStringToUStruct(*ResponseString, &CubeData, 0, NULL, 0);
+		UE_LOG(LogTemp, Warning, TEXT("ResponseString::FJSONObjectConverter: %s"), *ResponseString);
 	}
 	return CubeData;
 }

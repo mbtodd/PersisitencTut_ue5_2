@@ -14,6 +14,7 @@ struct FMyActorData
 	GENERATED_BODY()
 	UPROPERTY()
 	bool isvalid = false;
+	UPROPERTY()
 	float Xcoord = 0.0f;
 	UPROPERTY()
 	float Ycoord = 0.0f;

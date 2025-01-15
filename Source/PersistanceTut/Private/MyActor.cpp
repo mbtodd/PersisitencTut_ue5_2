@@ -10,10 +10,9 @@
 AMyActor::AMyActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	// PrimaryActorTick.bCanEverTick = false;
 
 	Root = CreateDefaultSubobject<UBoxComponent>(TEXT("Root"));
-
 	RootComponent = Root;
 
 	MyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MyMesh"));
@@ -84,7 +83,8 @@ void AMyActor::BeginPlay()
 
 void AMyActor::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool Success)
 {
-	FVector Location = FVector::ZeroVector;
+	// FVector Location = FVector::ZeroVector;
+	FVector Location = GetActorLocation();
 	Location.Z = 400;
 	
 	if (Success)
@@ -118,26 +118,5 @@ FMyActorData AMyActor::ConvertToNewCubeData(const FString& ResponseString)
 	return MyActorData;
 }
 
-// Called every frame
 
-// void AMyActor::Tick(float DeltaTime)
-// {
-	// Super::Tick(DeltaTime);
-
-	// FVector Pos = GetActorLocation();
-	// UE_LOG(LogTemp, Warning, TEXT("Pos: %f"), Pos.X);
-	
-
-	// FVector NewLocation = GetActorLocation();
-	// float RunningTime = 0.05f;
-
-	// float DeltaHeight = (FMath::Sin(RunningTime + DeltaTime) - FMath::Sin(DeltaTime));
-
-	// float DeltaHeight = 300.0f;
-	// NewLocation.Z = DeltaHeight;
-	//
-	// SetActorLocation(NewLocation);
-	// UE_LOG(LogTemp, Display, TEXT("New Location: %f"), NewLocation.Z);
-
-// }
 
